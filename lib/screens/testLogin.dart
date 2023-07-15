@@ -31,6 +31,16 @@ class _LoginTestState extends State<LoginTest> with SingleTickerProviderStateMix
     ));
   }
 
+  Future<void> _loginWithKakao(BuildContext context) async {
+    try {
+      final OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+      print('카카오계정으로 로그인 성공 ${token.accessToken}');
+      Navigator.pushReplacementNamed(context, '/home');
+    } catch (error) {
+      print('카카오계정으로 로그인 실패 $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -67,6 +77,7 @@ class _LoginTestState extends State<LoginTest> with SingleTickerProviderStateMix
                   right: 0,
                   bottom: constraints.maxHeight * 0.13,
                   child: GestureDetector(
+                    onTap: () => _loginWithKakao(context),
                     child: Image.asset(
                       'images/kakaologinimage.png',
                       width: 200,
