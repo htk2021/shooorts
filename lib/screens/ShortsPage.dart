@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter2/models/Shorts.dart';
 import 'package:flutter2/widgets/shortsPlayer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:flutter2/models/AppColors.dart';
+
+
+import '../models/Comment.dart';
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 List<Shorts> shortsList = [];
 class ShortsList extends StatefulWidget {
@@ -23,6 +27,7 @@ class ShortsList extends StatefulWidget {
 
 class _ShortsListState extends State<ShortsList> {
   late YoutubePlayerController _controller;
+  List<Comment> commentList = [];
   bool pushedLike = false;
   Color likeBtnColor = Colors.white,
       dislikeBtnColor = Colors.white,
@@ -36,6 +41,7 @@ class _ShortsListState extends State<ShortsList> {
   @override
   void initState() {
     super.initState();
+    getComments(widget.dataList[0].shortId);
   }
 
   bool getLiked(String shortId) {
@@ -45,6 +51,10 @@ class _ShortsListState extends State<ShortsList> {
     }
 
     return temp;
+  }
+
+  void getComments(String shortId) {
+    commentList = dummyComments;
   }
 
   @override
@@ -57,6 +67,9 @@ class _ShortsListState extends State<ShortsList> {
             ? Scaffold(
           body: PageView.builder(
             itemCount: widget.dataList.length,
+            onPageChanged: (index) {
+              getComments(widget.dataList[index].shortId);
+            },
             controller: PageController(
                 initialPage: 1,
                 viewportFraction: 1),
@@ -173,11 +186,12 @@ class _ShortsListState extends State<ShortsList> {
                                       padding:
                                       const EdgeInsets.only(bottom: 25),
                                       child: InkWell(
-                                        // onTap: (){
-                                        //   setState(() {
-                                        //     //open modal box
-                                        //   });
-                                        // },
+                                        onTap: (){
+                                          setState(() {
+                                            //open modal box
+                                            openComments(index);
+                                          });
+                                        },
                                         child: Column(
                                           children: [
                                             Icon(
@@ -239,4 +253,84 @@ class _ShortsListState extends State<ShortsList> {
     );
 
   }
+
+  void openComments(int index) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(10),
+          height: MediaQuery.of(context).size.height * 0.8,  // covers 80% of screen
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: AppColors.commentBackColor,  // 색상 설정
+                  borderRadius: BorderRadius.circular(10),  // 모서리 둥글게
+                ),
+                // height: MediaQuery.of(context).size.height * 0.8 * 0.3, // 상단의 30%
+                child: Wrap(
+                  spacing: 8.0, // gap between adjacent buttons
+                  runSpacing: 4.0, // gap between lines
+                  children: <Widget>[
+                    for (var item in widget.dataList[index].hashtag)
+                      TextButton( // or ElevatedButton
+                        onPressed: () {},  // add functionality as per requirements
+                        child: Text(item),
+                        style: TextButton.styleFrom(
+                          primary: Colors.white,
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                          ),
+                        ),
+                      )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: commentList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: AssetImage('assets/images/temp_profile.png'),
+                            radius: 20,
+                          ),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  commentList[index].userId,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(commentList[index].comment),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+
 }
