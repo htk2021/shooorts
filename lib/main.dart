@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter2/screens/TabPage.dart';
 import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
 import 'login_screen.dart';
 import 'my_home_page.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const LoginScreen(),
-        '/home': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
+        '/home': (context) => TabPage(),
       },
     );
   }
