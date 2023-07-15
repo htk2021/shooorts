@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter2/widgets/ChatBubble.dart';
 import 'package:ninepatch_image/ninepatch_image.dart';
 import '../models/Question.dart';
 
@@ -64,93 +65,156 @@ class _TrainingPageState extends State<TrainingPage> {
   Widget build(BuildContext context) {
     final currentQuestion = dummyList[currentQuestionIndex];
 
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("images/chatbackground.png"),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 30.0), // 좌우 패딩 적용
-              controller: _scrollController, // Assign ScrollController to ListView
-              itemCount: answeredQuestions.length * 2 + 1,
-              itemBuilder: (context, index) {
-                if (index.isOdd) {
-                  final answerIndex = (index ~/ 2);
-                  final answer = answeredQuestions[answerIndex];
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: NinePatchImage(
-                      imageProvider: AssetImage("images/speechbubble2.9.png"),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          answer,
-                          style: TextStyle(fontSize: 16.0),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  );
-                } else {
-                  final questionIndex = (index ~/ 2);
-                  final question = dummyList[questionIndex];
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: NinePatchImage(
-                      imageProvider: AssetImage("images/speechbubble.9.png"),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          question.q,
-                          style: TextStyle(fontSize: 16.0),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  );
-                }
-              },
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("images/chatbackground.png"),
+              fit: BoxFit.cover,
             ),
           ),
-          SizedBox(height: 8.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             children: [
               Expanded(
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      currentAnswer = value;
-                    });
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0), // 좌우 패딩 적용
+                  controller: _scrollController,
+                  itemCount: answeredQuestions.length * 2 + 1,
+                  itemBuilder: (context, index) {
+                    if (index.isOdd) {
+                      final answerIndex = (index ~/ 2);
+                      final answer = answeredQuestions[answerIndex];
+
+                      return Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: ChatBubble(answer, true)
+                      );
+                    } else {
+                      final questionIndex = (index ~/ 2);
+                      final question = dummyList[questionIndex];
+
+                      return Padding(
+                          padding: const EdgeInsets.only(bottom: 3.0),
+                          child: ChatBubble(question.q,false)
+                      );
+                    }
                   },
-                  decoration: InputDecoration(
-                    labelText: '정답을 입력하세요',
-                    border: OutlineInputBorder(),
-                  ),
                 ),
               ),
-              SizedBox(width: 8.0),
-              GestureDetector(
-                onTap: () {
-                  submitAnswer(currentAnswer);
-                },
-                child: Image.asset(
-                  'images/arrow.png',
-                  width: 32.0,
-                  height: 32.0,
-                ),
+              SizedBox(height: 8.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      margin: EdgeInsets.only(left:10,bottom: 10,top: 10),
+                      child: TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            currentAnswer = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: '정답을 입력하세요',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white
+                        ),
+                      ),
+                    )
+                  ),
+                  SizedBox(width: 8.0),
+                  GestureDetector(
+                    onTap: () {
+                      submitAnswer(currentAnswer);
+                    },
+                    child: Image.asset(
+                      'images/arrow.png',
+                      width: 32.0,
+                      height: 32.0,
+                    ),
+                  ),
+                  SizedBox(width: 8.0)
+                ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
+
+
+    // return Container(
+    //   decoration: BoxDecoration(
+    //     image: DecorationImage(
+    //       image: AssetImage("images/chatbackground.png"),
+    //       fit: BoxFit.cover,
+    //     ),
+    //   ),
+    //   child: Column(
+    //     children: [
+    //       Expanded(
+    //         child: ListView.builder(
+    //           padding: EdgeInsets.symmetric(horizontal: 30.0), // 좌우 패딩 적용
+    //           controller: _scrollController, // Assign ScrollController to ListView
+    //           itemCount: answeredQuestions.length * 2 + 1,
+    //           itemBuilder: (context, index) {
+    //             if (index.isOdd) {
+    //               final answerIndex = (index ~/ 2);
+    //               final answer = answeredQuestions[answerIndex];
+    //
+    //               return Padding(
+    //                 padding: const EdgeInsets.only(bottom: 3.0),
+    //                 child: ChatBubble(answer, true)
+    //               );
+    //             } else {
+    //               final questionIndex = (index ~/ 2);
+    //               final question = dummyList[questionIndex];
+    //
+    //               return Padding(
+    //                 padding: const EdgeInsets.only(bottom: 3.0),
+    //                 child: ChatBubble(question.q,false)
+    //               );
+    //             }
+    //           },
+    //         ),
+    //       ),
+    //       SizedBox(height: 8.0),
+    //       Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //         children: [
+    //           Expanded(
+    //             child: TextField(
+    //               onChanged: (value) {
+    //                 setState(() {
+    //                   currentAnswer = value;
+    //                 });
+    //               },
+    //               decoration: InputDecoration(
+    //                 labelText: '정답을 입력하세요',
+    //                 border: OutlineInputBorder(),
+    //               ),
+    //             ),
+    //           ),
+    //           SizedBox(width: 8.0),
+    //           GestureDetector(
+    //             onTap: () {
+    //               submitAnswer(currentAnswer);
+    //             },
+    //             child: Image.asset(
+    //               'images/arrow.png',
+    //               width: 32.0,
+    //               height: 32.0,
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 }
