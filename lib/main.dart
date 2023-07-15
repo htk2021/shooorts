@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:flutter2/models/AppColors.dart';
 import 'package:flutter2/screens/TabPage.dart';
-import 'package:flutter2/screens/testLogin.dart';
-import 'package:kakao_flutter_sdk_common/kakao_flutter_sdk_common.dart';
-import 'login_screen.dart';
-import 'my_home_page.dart';
+import 'package:flutter2/login_screen.dart';
+import 'package:flutter2/loading.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +15,24 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isLoggedIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -27,7 +41,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) =>  TabPage(),
+        '/': (context) => const LoginScreen(),
         '/home': (context) => TabPage(),
       },
     );
