@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter2/models/AppColors.dart';
 import 'package:flutter2/models/User.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class MyPage extends StatefulWidget {
@@ -11,17 +12,28 @@ class MyPage extends StatefulWidget {
 
 class _MyPageState extends State<MyPage> with SingleTickerProviderStateMixin {
   late final User user;
+  late SharedPreferences sp;
+  late String userId; //이게 SharedPreferences로 저장한 카카오 회원번호
 
   @override
   void initState() {
     super.initState();
-
+    loadUserId();
     // 유저 정보 불러오기
-    user = User(userId: '123', name: '세 종대왕', reviewShorts: ["123","123","123","123","123","123","123","123"], likedShorts: ["123"]);
+    user = User(userId: '123', name: '세 종대왕', imageurl: 'd', reviewShorts: ["123","123","123","123","123","123","123","123"], likedShorts: ["123"]);
   }
 
   void goToShorts(String shortsId) {
 
+  }
+
+  loadUserId() async {
+    // SharedPreferences의 인스턴스를 필드에 저장
+    sp = await SharedPreferences.getInstance();
+    setState(() {
+      // SharedPreferences에 counter로 저장된 값을 읽어 필드에 저장. 없을 경우 0으로 대입
+      userId = (sp.getString('userId') ?? '');
+    });
   }
 
   @override
