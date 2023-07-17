@@ -10,6 +10,19 @@ class Shorts {
   int likes;
 
   Shorts({required this.shortId, required this.url, required this.commentsId, required this.title, required this.profilePic, required this.uploader, required this.hashtag, required this.likes});
+
+  factory Shorts.fromJson(Map<String, dynamic> json) {
+    return Shorts(
+      shortId: json['shortId'],
+      url: json['url'],
+      commentsId: List<String>.from(json['commentsId']),
+      title: json['title'],
+      profilePic: json['profilePic'],
+      uploader: json['uploader'],
+      hashtag: List<String>.from(json['hashtag']),
+      likes: json['likes'],
+    );
+  }
 }
 
 List<Shorts> dummyList = [
