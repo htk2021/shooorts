@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         // 새 유저 추가
         try {
           User user = await UserApi.instance.me();
-          apiClient.addUser(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString());
+          await apiClient.Useradd(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString());
         } catch (error) {
           print('사용자 정보 요청 실패 $error');
         }
