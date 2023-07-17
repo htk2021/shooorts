@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter2/UsingApi.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:flutter2/models/AppColors.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _animation;
+  final apiClient = ApiClient();
 
   @override
   void initState() {
@@ -34,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     _checkTokenValid();
   }
 
+
   Future<void> _checkTokenValid() async {
     if (await AuthApi.instance.hasToken()) {
       try {
@@ -52,7 +57,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
     }
   }
 
+
+
   Future<void> _loginWithKakao(BuildContext context) async {
+
     if (await AuthApi.instance.hasToken()) {
       try {
         AccessTokenInfo tokenInfo = await UserApi.instance.accessTokenInfo();
@@ -64,27 +72,31 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         } else {
           print('토큰 정보 조회 실패 $error');
         }
-
-        try {
-          // 카카오계정으로 로그인
-          OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
-          print('로그인 성공 ${token.accessToken}');
-          Navigator.pushReplacementNamed(context, '/home');
-        } catch (error) {
-          print('로그인 실패 $error');
-        }
       }
     } else {
       print('발급된 토큰 없음');
       try {
+        // 카카오계정으로 로그인
         OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
         print('로그인 성공 ${token.accessToken}');
+
+        // 새 유저 추가
+        try {
+          User user = await UserApi.instance.me();
+          apiClient.addUser(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString());
+        } catch (error) {
+          print('사용자 정보 요청 실패 $error');
+        }
+
         Navigator.pushReplacementNamed(context, '/home');
       } catch (error) {
         print('로그인 실패 $error');
       }
     }
+
   }
+
+
 
   @override
   Widget build(BuildContext context) {
