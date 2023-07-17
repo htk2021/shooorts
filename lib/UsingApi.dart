@@ -5,7 +5,9 @@ import 'dart:convert';
 
 class ApiClient {
   static const url = 'http://172.10.5.167:80/';
-  Future<void> Useradd(String name, String userId) async {
+
+  //User 관련 Api
+  Future<void> Useradd(String name, String userId, String imageurl) async {
     const url_withfunc=url+'user/add';
     final response = await http.post(
       Uri.parse(url_withfunc),
@@ -15,6 +17,7 @@ class ApiClient {
       body: jsonEncode(<String, String>{
         'name': name,
         'userId': userId,
+        'imageurl': imageurl,
       }),
     );
     if (response.statusCode == 200) {
@@ -99,22 +102,26 @@ class ApiClient {
     }
   }
 
-  Future<void> ShortsdeleteComments(String userID, String commentId) async {
-    const url_withfunc = url + 'comment/deleteComments';
+  Future<List<String>> UsergetReview(String userId) async {
+    const url_withfunc = url + 'user/getReview';
     final response = await http.post(
       Uri.parse(url_withfunc),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
-        'userID': userID,
-        'commentId': commentId,
+      body: jsonEncode({
+        'userId': userId,
       }),
     );
     if (response.statusCode == 200) {
-      print('댓글 삭제 완료');
+      // 응답 처리
+      final responseBody = response.body;
+      final jsonList = jsonDecode(responseBody) as List<dynamic>;
+      final reviewList = jsonList.map((item) => item as String).toList();
+      return reviewList;
     } else {
-      print('댓글 삭제 실패');
+      print('Failed to fetch Shorts List: ${response.statusCode}');
+      throw Exception('Failed to fetch Shorts List: ${response.statusCode}');
     }
   }
 
@@ -226,6 +233,44 @@ class ApiClient {
     }
   }
 
+  Future<void> addComments(String userID, String shortsId, String comment) async {
+    const url_withfunc = url + 'comment/addComments';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'userID': userID,
+        'shortsId': shortsId,
+        'comment': comment,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('댓글 추가 완료');
+    } else {
+      print('댓글 추가 실패');
+    }
+  }
+
+  Future<void> deleteComments(String userID, String commentId) async {
+    const url_withfunc = url + 'comment/deleteComments';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'userID': userID,
+        'commentId': commentId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('댓글 삭제 완료');
+    } else {
+      print('댓글 삭제 실패');
+    }
+  }
 
   Future<void> commentModify(String userId, String commentId, String comment) async {
     const url_withfunc=url+'comment/modifyComments';

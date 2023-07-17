@@ -5,6 +5,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:flutter2/models/AppColors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -83,8 +84,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         // 새 유저 추가
         try {
           User user = await UserApi.instance.me();
-          await apiClient.Useradd(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString());
-
+          await apiClient.Useradd(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString(), user.kakaoAccount?.profile?.thumbnailImageUrl ?? '');
           sp = await SharedPreferences.getInstance();
           await sp.setString('userId', user.id.toString());
         } catch (error) {
