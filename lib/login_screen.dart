@@ -5,6 +5,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:flutter2/models/AppColors.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter2/main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -83,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         // 새 유저 추가
         try {
           User user = await UserApi.instance.me();
-          await apiClient.Useradd(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString());
+          await apiClient.Useradd(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString(), user.kakaoAccount?.profile?.thumbnailImageUrl ?? '');
         } catch (error) {
           print('사용자 정보 요청 실패 $error');
         }
