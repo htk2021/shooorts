@@ -118,6 +118,29 @@ class ApiClient {
     }
   }
 
+  // api 추가해야함
+  Future<List<String>> getLikedList(String userId) async {
+    const url_withfunc = url + 'comment/getLikedList';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'userId': userId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      // 응답 처리
+      final responseBody = response.body;
+      final jsonList = jsonDecode(responseBody) as List<String>;
+      return jsonList;
+    } else {
+      print('Failed to fetch Shorts List: ${response.statusCode}');
+      throw Exception('Failed to fetch Shorts List: ${response.statusCode}');
+    }
+  }
+
   // Shorts 관련 API
 
   Future<void> shortsLikeUp(String userId, String shortsId) async {

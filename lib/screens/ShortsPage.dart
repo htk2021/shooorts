@@ -2,24 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter2/models/Shorts.dart';
 import 'package:flutter2/widgets/shortsPlayer.dart';
+import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:flutter2/models/AppColors.dart';
-
+import 'package:flutter2/UsingApi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/Comment.dart';
 // import 'package:flutter_spinkit/flutter_spinkit.dart';
 List<Shorts> shortsList = [];
 class ShortsList extends StatefulWidget {
-  final List<Shorts> dataList = dummyList;
-  // final int index;
-  // final String shortId;
-  // final String url;
-  // final List<String> commentsId;
-  // final String title;
-  // final String profilePic;
-  // final String uploader;
-  // final List<String> hashtag;
-  // final int likes;
+  // final List<Shorts> dataList = dummyList;
 
   @override
   _ShortsListState createState() => _ShortsListState();
@@ -27,7 +20,14 @@ class ShortsList extends StatefulWidget {
 
 class _ShortsListState extends State<ShortsList> {
   late YoutubePlayerController _controller;
+  late SharedPreferences sp;
+  late String userId;
+  final apiClient = ApiClient();
+
+  List<Shorts> dataList = [];
   List<Comment> commentList = [];
+  List<String> likedList = [];
+
   bool pushedLike = false;
   Color likeBtnColor = Colors.white,
       dislikeBtnColor = Colors.white,
@@ -41,20 +41,47 @@ class _ShortsListState extends State<ShortsList> {
   @override
   void initState() {
     super.initState();
-    getComments(widget.dataList[0].shortId);
+    getShorts();
+    loadUserId();
+    getComments(dataList[0].shortId);
   }
 
-  bool getLiked(String shortId) {
-    bool temp = false;
-    for(var i=0 ; i<widget.dataList.length ; i++) {
+  loadUserId() async {
+    // SharedPreferences의 인스턴스를 필드에 저장
+    sp = await SharedPreferences.getInstance();
+    setState(() {
+      // SharedPreferences에 counter로 저장된 값을 읽어 필드에 저장. 없을 경우 0으로 대입
+      userId = (sp.getString('userId') ?? '');
+    });
+  }
 
+  void getLikedList() async {
+    likedList = await apiClient.getLikedList(userId);
+  }
+
+  bool getLiked(String shortsId) {
+    for(var i=0 ; i<likedList.length ; i++) {
+      if(likedList[i] == shortsId) {
+        return true;
+      }
     }
-
-    return temp;
+    return false;
   }
 
-  void getComments(String shortId) {
-    commentList = dummyComments;
+  void getComments(String shortsId) async {
+    commentList = await apiClient.getCommentsList(shortsId);
+  }
+
+  void getShorts() async {
+    dataList = await apiClient.getShortsList();
+  }
+
+  void liked(String shortsId) async {
+
+  }
+
+  void unliked(String shortsId) async {
+
   }
 
   @override
@@ -63,12 +90,12 @@ class _ShortsListState extends State<ShortsList> {
     double h = MediaQuery.of(context).size.height;
 
     return SafeArea(
-        child: (widget.dataList.isNotEmpty)
+        child: (dataList.isNotEmpty)
             ? Scaffold(
           body: PageView.builder(
-            itemCount: widget.dataList.length,
+            itemCount: dataList.length,
             onPageChanged: (index) {
-              getComments(widget.dataList[index].shortId);
+              getComments(dataList[index].shortId);
             },
             controller: PageController(
                 initialPage: 1,
@@ -78,16 +105,15 @@ class _ShortsListState extends State<ShortsList> {
               return Stack(
                 fit: StackFit.expand,
                 children: [
-                  ShortsScreen(videoId: widget.dataList[index].url,),
+                  // 쇼츠 화면
+                  ShortsScreen(videoId: dataList[index].url,),
+                  // 버튼 & 이외 내용들
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      // mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        //upper options row
-                        //skip
                         Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 0, horizontal: 15),
@@ -102,6 +128,7 @@ class _ShortsListState extends State<ShortsList> {
                                 children: [
                                   Row(
                                     children: [
+                                      // 업로더 프로필
                                       CircleAvatar(
                                         backgroundImage: AssetImage('assets/images/temp_profile.png'),
                                         radius: 20,
@@ -110,7 +137,8 @@ class _ShortsListState extends State<ShortsList> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 10),
                                         child: Text(
-                                          '@${widget.dataList[index].uploader}',
+                                          // 업로더 이름
+                                          '@${dataList[index].uploader}',
                                           style: const TextStyle(
                                             color: Colors.white,
                                             fontSize: 19,
@@ -124,8 +152,8 @@ class _ShortsListState extends State<ShortsList> {
                                   Padding(
                                     padding: const EdgeInsets.all(8),
                                     child: Text(
-                                      widget
-                                          .dataList[index].title
+                                      // 쇼츠 제목
+                                      dataList[index].title
                                           .toString(),
                                       style: const TextStyle(
                                         color: Colors.white,
@@ -146,20 +174,14 @@ class _ShortsListState extends State<ShortsList> {
                                       child: InkWell(
                                         onTap: () {
                                           setState(() {
-                                            pushedLike = getLiked(widget.dataList[index].shortId);
+                                            pushedLike = getLiked(dataList[index].shortId);
                                             if (pushedLike) {
                                               // user 의 좋아요 데이터도 수정해줘야 함
-                                              pushedLike = false;
-                                              widget.dataList[index].likes--;
+                                              unliked(dataList[index].shortId);
                                               likeBtnColor = Colors.white;
                                             } else {
-                                              pushedLike = true;
-                                              widget.dataList[index].likes--;
+                                              liked(dataList[index].shortId);
                                               likeBtnColor = Colors.blue;
-                                              if (pushedLike) {
-                                                dislikeBtnColor =
-                                                    Colors.white;
-                                              }
                                             }
                                           });
                                         },
@@ -171,7 +193,7 @@ class _ShortsListState extends State<ShortsList> {
                                               size: iconSize,
                                             ),
                                             Text(
-                                              widget.dataList[index]
+                                              dataList[index]
                                                   .likes
                                                   .toString(),
                                               style: textStyle1,
@@ -200,7 +222,7 @@ class _ShortsListState extends State<ShortsList> {
                                               size: iconSize,
                                             ),
                                             Text(
-                                              widget.dataList[index]
+                                              dataList[index]
                                                   .commentsId.length
                                                   .toString(),
                                               style: textStyle1,
@@ -275,7 +297,7 @@ class _ShortsListState extends State<ShortsList> {
                   spacing: 8.0, // gap between adjacent buttons
                   runSpacing: 4.0, // gap between lines
                   children: <Widget>[
-                    for (var item in widget.dataList[index].hashtag)
+                    for (var item in dataList[index].hashtag)
                       TextButton( // or ElevatedButton
                         onPressed: () {},  // add functionality as per requirements
                         child: Text(item),
@@ -299,7 +321,14 @@ class _ShortsListState extends State<ShortsList> {
                       child: Row(
                         children: [
                           CircleAvatar(
-                            backgroundImage: AssetImage('assets/images/temp_profile.png'),
+                            // backgroundImage: AssetImage('assets/images/temp_profile.png'),
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'assets/placeholder_image.png', // 기본 이미지 경로
+                              image: "asd", // 실제 이미지 경로
+                              fit: BoxFit.cover, // 이미지 채우기 모드
+                              width: 200, // 이미지 너비
+                              height: 200, // 이미지 높이
+                            ),
                             radius: 20,
                           ),
                           SizedBox(width: 10),

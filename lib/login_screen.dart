@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter2/UsingApi.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:flutter2/models/AppColors.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -16,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _animation;
+  late final SharedPreferences sp;
   final apiClient = ApiClient();
 
   @override
@@ -84,6 +84,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
         try {
           User user = await UserApi.instance.me();
           await apiClient.Useradd(user.kakaoAccount?.profile?.nickname ?? '', user.id.toString());
+
+          sp = await SharedPreferences.getInstance();
+          await sp.setString('userId', user.id.toString());
         } catch (error) {
           print('사용자 정보 요청 실패 $error');
         }
