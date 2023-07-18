@@ -127,7 +127,7 @@ class ApiClient {
 
   // api 추가해야함
   Future<List<String>> getLikedList(String userId) async {
-    const url_withfunc = url + 'comment/getLikedList';
+    const url_withfunc = url + 'user/getLikedList';
     final response = await http.post(
       Uri.parse(url_withfunc),
       headers: <String, String>{
@@ -140,8 +140,9 @@ class ApiClient {
     if (response.statusCode == 200) {
       // 응답 처리
       final responseBody = response.body;
-      final jsonList = jsonDecode(responseBody) as List<String>;
-      return jsonList;
+      final jsonList = jsonDecode(responseBody) as List<dynamic>;
+      final stringList = jsonList.map((item) => item.toString()).toList();
+      return stringList;
     } else {
       print('Failed to fetch Shorts List: ${response.statusCode}');
       throw Exception('Failed to fetch Shorts List: ${response.statusCode}');
@@ -241,7 +242,7 @@ class ApiClient {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'userID': userID,
+        'userId': userID,
         'shortsId': shortsId,
         'comment': comment,
       }),
@@ -249,7 +250,7 @@ class ApiClient {
     if (response.statusCode == 200) {
       print('댓글 추가 완료');
     } else {
-      print('댓글 추가 실패');
+      print('댓글 추가 실패 ${response.statusCode}');
     }
   }
 
