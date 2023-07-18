@@ -116,8 +116,8 @@ class ApiClient {
     if (response.statusCode == 200) {
       // 응답 처리
       final responseBody = response.body;
-      final jsonList = jsonDecode(responseBody) as List<dynamic>;
-      final reviewList = jsonList.map((item) => item as String).toList();
+      final jsonData = jsonDecode(responseBody) as Map<String, dynamic>;
+      final reviewList = (jsonData['reviewShorts'] as List).cast<String>();
       return reviewList;
     } else {
       print('Failed to fetch Shorts List: ${response.statusCode}');
@@ -125,7 +125,71 @@ class ApiClient {
     }
   }
 
-  // api 추가해야함
+  Future<String?> UsergetImage(String userId) async {
+    const url_withfunc = url + 'user/getImage';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'userId': userId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('유저 사진 얻기 완료');
+      return jsonDecode(response.body)['imageUrl'];
+    } else {
+      print('유저 사진 얻기 실패');
+      return null;
+    }
+  }
+
+  Future<String?> UsergetName(String userId) async {
+    const url_withfunc = url + 'user/getName';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'userId': userId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('유저 이름 얻기 완료');
+      return jsonDecode(response.body)['name'];
+    } else {
+      print('유저 이름 얻기 실패');
+      return null;
+    }
+  }
+
+  Future<List<String>> Usergetthumbnails(String userId) async {
+    const url_withfunc = url + 'user/getthumbnails';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'userId': userId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      // 응답 처리
+      final responseBody = response.body;
+      final jsonData = jsonDecode(responseBody) as Map<String, dynamic>;
+      final thumbnailUrls = (jsonData['thumbnailUrls'] as List<dynamic>)
+          .map((item) => item as String)
+          .toList();
+      return thumbnailUrls;
+    } else {
+      print('Failed to fetch Shorts List: ${response.statusCode}');
+      throw Exception('Failed to fetch Shorts List: ${response.statusCode}');
+    }
+  }
+
   Future<List<String>> getLikedList(String userId) async {
     const url_withfunc = url + 'user/getLikedList';
     final response = await http.post(
@@ -242,7 +306,7 @@ class ApiClient {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'userId': userID,
+        'userID': userID,
         'shortsId': shortsId,
         'comment': comment,
       }),
@@ -250,7 +314,7 @@ class ApiClient {
     if (response.statusCode == 200) {
       print('댓글 추가 완료');
     } else {
-      print('댓글 추가 실패 ${response.statusCode}');
+      print('댓글 추가 실패');
     }
   }
 

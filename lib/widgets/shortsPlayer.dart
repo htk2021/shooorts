@@ -4,8 +4,9 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ShortsScreen extends StatefulWidget {
   final String videoId;
+  final VoidCallback onClose;
 
-  ShortsScreen({required this.videoId});
+  ShortsScreen({required this.videoId, required this.onClose});
 
   @override
   PlayerState createState() => PlayerState(videoId);
@@ -39,12 +40,19 @@ class PlayerState extends State<ShortsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: Colors.red,
+    return WillPopScope(
+      onWillPop: () async {
+        widget.onClose(); // ShortsScreen을 닫을 때 onClose 콜백 실행
+        return true;
+      },
+      child: Container(
+        child: YoutubePlayer(
+          controller: _controller,
+          showVideoProgressIndicator: true,
+          progressIndicatorColor: Colors.red,
+        ),
       ),
     );
   }
 }
+
