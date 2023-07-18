@@ -78,7 +78,12 @@ class _ShortsListState extends State<ShortsList> {
               return Stack(
                 fit: StackFit.expand,
                 children: [
-                  ShortsScreen(videoId: widget.dataList[index].url,),
+                  ShortsScreen(
+                    videoId: widget.dataList[index].url,
+                    onClose: () {
+                      // ShortsScreen이 닫힐 때 수행할 동작을 여기에 추가하세요
+                    },
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
