@@ -190,6 +190,29 @@ class ApiClient {
     }
   }
 
+  Future<List<String>> getLikedList(String userId) async {
+    const url_withfunc = url + 'user/getLikedList';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'userId': userId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      // 응답 처리
+      final responseBody = response.body;
+      final jsonList = jsonDecode(responseBody) as List<dynamic>;
+      final stringList = jsonList.map((item) => item.toString()).toList();
+      return stringList;
+    } else {
+      print('Failed to fetch Shorts List: ${response.statusCode}');
+      throw Exception('Failed to fetch Shorts List: ${response.statusCode}');
+    }
+  }
+
   // Shorts 관련 API
 
   Future<void> shortsLikeUp(String userId, String shortsId) async {
