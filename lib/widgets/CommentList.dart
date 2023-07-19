@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter2/UsingApi.dart';
 import 'package:flutter2/models/AppColors.dart';
 import 'package:flutter2/models/Comment.dart';
+import 'package:flutter2/models/Shorts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CommentList extends StatefulWidget {
   final String shortsId;
@@ -17,9 +19,11 @@ class CommentList extends StatefulWidget {
 
 class _CommentListState extends State<CommentList> {
   late Future<List<Comment>> _commentsFuture;
+  late List<String> realHashTag;
   final _commentController = TextEditingController();
   ApiClient apiClient = ApiClient();
   String currentComment = "";
+  final hashtagRegExp = RegExp(r"\B#\w\w+");
 
   Future<List<Comment>> _getComments(String shortsId) async {
     print("load comment ${shortsId}");
@@ -31,7 +35,7 @@ class _CommentListState extends State<CommentList> {
     print('userid : ${widget.userId}, shortdId : ${shortsId}, comment : ${comment}');
 
     // 서버에서 데이터를 새로 불러오는 비동기 함수 호출
-    final newData = await apiClient.getCommentsList(shortsId);
+    // final newData = await apiClient.getCommentsList(shortsId);
 
     setState(() {
       // 받아온 새로운 데이터로 상태 변수를 업데이트
@@ -39,10 +43,30 @@ class _CommentListState extends State<CommentList> {
     });
   }
 
+  _launchURL(String hashtag) async {
+    String url = 'https://namu.wiki/w/$hashtag';
+    Uri _url = Uri.parse(url);
+    if (!await launchUrl(_url)) {
+      throw Exception("could not launch $_url");
+    }
+  }
+
+  void handleHashtags(List<String> hashtags) async {
+    for(int i=0 ; i<hashtags.length ; i++) {
+      hashtags[i] = hashtags[i].substring(1);
+    }
+    Shorts temp;
+    temp = await apiClient.updateHashtags(widget.shortsId, hashtags);
+    setState(() {
+      realHashTag = temp.hashtag;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _commentsFuture = _getComments(widget.shortsId);
+    realHashTag = widget.hashtags;
   }
 
   void refreshComments() {
@@ -85,9 +109,11 @@ class _CommentListState extends State<CommentList> {
                         spacing: 8.0, // gap between adjacent buttons
                         runSpacing: 4.0, // gap between lines
                         children: <Widget>[
-                          for (var item in widget.hashtags)
+                          for (var item in realHashTag)
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _launchURL(item);
+                              },
                               child: Text(item),
                               style: TextButton.styleFrom(
                                 primary: Colors.white,
@@ -109,14 +135,14 @@ class _CommentListState extends State<CommentList> {
                             child: Row(
                               children: [
                                 CircleAvatar(
-                                  backgroundImage: AssetImage('assets/images/temp_profile.png'),
-                                  // child: FadeInImage.assetNetwork(
-                                  //   placeholder: 'assets/placeholder_image.png',
-                                  //   image: "asd",
-                                  //   fit: BoxFit.cover,
-                                  //   width: 200,
-                                  //   height: 200,
-                                  // ),
+                                  // backgroundImage: AssetImage('assets/images/temp_profile.png'),
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder: 'assets/placeholder_image.png',
+                                    image: commentList![index].profileUrl,
+                                    fit: BoxFit.cover,
+                                    width: 200,
+                                    height: 200,
+                                  ),
                                   radius: 20,
                                 ),
                                 SizedBox(width: 10),
@@ -172,6 +198,11 @@ class _CommentListState extends State<CommentList> {
                                 if(currentComment.isNotEmpty) {
                                   //todo
                                   addComment(widget.shortsId, currentComment);
+                                  var matches = hashtagRegExp.allMatches(currentComment);
+                                  if(matches.isNotEmpty) {
+                                    var hashtags = matches.map((match) => currentComment.substring(match.start, match.end)).toList();
+                                    handleHashtags(hashtags);
+                                  }
                                   currentComment = "";
                                   _commentController.clear();
                                 }

@@ -386,7 +386,7 @@ class ApiClient {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'userID': userID,
+        'userId': userID,
         'commentId': commentId,
       }),
     );
@@ -414,6 +414,27 @@ class ApiClient {
       print('좋아요 취소 완료');
     } else {
       print('좋아요 취소 실패 : ${response.statusCode}');
+    }
+  }
+
+  Future<Shorts> updateHashtags(String shortsId, List<String> hashtags) async {
+    const url_withfunc=url+'shorts/updateHashtags';
+    final response = await http.put(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'shortsId': shortsId,
+        'hashtag': hashtags
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('hashtag Update successfully');
+      return Shorts.fromJson(jsonDecode(response.body));
+    } else {
+      print('hashtag update fail : ${response.statusCode}');
+      throw Exception('Failed to update hashtags.');
     }
   }
 

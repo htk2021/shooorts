@@ -16,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<Offset> _animation;
+  late final Animation<Offset> _animation_tiger;
   late final SharedPreferences sp;
   final apiClient = ApiClient();
 
@@ -35,6 +36,31 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       parent: _controller,
       curve: Curves.fastOutSlowIn,  // Define the curve type
     ));
+
+    _animation_tiger = TweenSequence<Offset>(
+      [
+        TweenSequenceItem<Offset>(
+          tween: Tween<Offset>(
+            begin: Offset(1.0, 0.7),
+            end: Offset(1.0, 0.0),
+          ),
+          weight: 50.0,
+        ),
+        TweenSequenceItem<Offset>(
+          tween: Tween<Offset>(
+            begin: Offset(1.0, 0.0),
+            end: Offset(1.0, 0.7),
+          ),
+          weight: 50.0,
+        ),
+      ],
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+
 
     _checkTokenValid();
   }
