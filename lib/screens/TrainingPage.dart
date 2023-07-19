@@ -14,6 +14,7 @@ class _TrainingPageState extends State<TrainingPage> {
   int currentQuestionIndex = 0;
   List<String> answeredQuestions = [];
   String currentAnswer = ''; // Declare and initialize currentAnswer variable
+  final _commentController = TextEditingController();
 
   late SharedPreferences sp;
   late String userId;
@@ -135,6 +136,7 @@ class _TrainingPageState extends State<TrainingPage> {
                       height: 40,
                       margin: EdgeInsets.only(left:10,bottom: 10,top: 10),
                       child: TextField(
+                        controller: _commentController,
                         onChanged: (value) {
                           setState(() {
                             currentAnswer = value;
@@ -155,6 +157,7 @@ class _TrainingPageState extends State<TrainingPage> {
                   GestureDetector(
                     onTap: () {
                       submitAnswer(currentAnswer);
+                      _commentController.clear();
                     },
                     child: Image.asset(
                       'images/arrow.png',

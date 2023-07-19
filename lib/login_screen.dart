@@ -41,15 +41,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       [
         TweenSequenceItem<Offset>(
           tween: Tween<Offset>(
-            begin: Offset(1.0, 0.7),
-            end: Offset(1.0, 0.0),
+            begin: Offset(0.0, 0.7),
+            end: Offset(0.0, 0.0),
           ),
           weight: 50.0,
         ),
         TweenSequenceItem<Offset>(
           tween: Tween<Offset>(
-            begin: Offset(1.0, 0.0),
-            end: Offset(1.0, 0.7),
+            begin: Offset(0.0, 0.0),
+            end: Offset(0.0, 0.7),
           ),
           weight: 50.0,
         ),
@@ -161,6 +161,24 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 Positioned(
                   left: 0,
                   right: 0,
+                  bottom: constraints.maxHeight * 0.5,
+                  child: SlideTransition(
+                    position: _animation,
+                    child: Image.asset('images/birds.png'),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: SlideTransition(
+                    position: _animation_tiger,
+                    child: Image.asset('images/three_tigers.png'),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  right: 0,
                   bottom: constraints.maxHeight * 0.13,
                   child: GestureDetector(
                     onTap: () => _loginWithKakao(context),
@@ -169,15 +187,6 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                       width: 200,
                       height: 50,
                     ),
-                  ),
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: constraints.maxHeight * 0.5,
-                  child: SlideTransition(
-                    position: _animation,
-                    child: Image.asset('images/birds.png'),
                   ),
                 ),
               ],

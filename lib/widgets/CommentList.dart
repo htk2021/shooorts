@@ -135,14 +135,7 @@ class _CommentListState extends State<CommentList> {
                             child: Row(
                               children: [
                                 CircleAvatar(
-                                  // backgroundImage: AssetImage('assets/images/temp_profile.png'),
-                                  child: FadeInImage.assetNetwork(
-                                    placeholder: 'assets/placeholder_image.png',
-                                    image: commentList![index].profileUrl,
-                                    fit: BoxFit.cover,
-                                    width: 200,
-                                    height: 200,
-                                  ),
+                                  backgroundImage: AssetImage('assets/images/temp_profile.png'),
                                   radius: 20,
                                 ),
                                 SizedBox(width: 10),
