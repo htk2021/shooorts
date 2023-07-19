@@ -11,9 +11,7 @@ madcamp 3주차 플러터 앱 프로젝트
 
 카카오에서 제공한 API를 이용했고, 학과 호랑이 애니메이션을 추가했습니다.
 
-<img src="https://github.com/useruseruse/madcampApp/assets/138096893/10121318-2e12-4956-9f4c-c0c698580212.png" width="200" height="400"/>
-<img src="https://github.com/useruseruse/madcampApp/assets/138096893/70de147c-3a07-4a37-a593-490cbd638cb7.png" width="200" height="400"/>
-
+<img src="https://github.com/htk2021/shooorts/assets/138096893/081ff226-5f4b-4607-b515-563c589353e1.png" width="200" height="400"/>
 
 
 # 탭 1 : 밈 훈련소
@@ -24,19 +22,23 @@ madcamp 3주차 플러터 앱 프로젝트
 
 답변이 틀렸을 경우 X 표시가 뜨며, 나의 프로필에 복습할 밈이 추가됩니다.
 
-<img src="https://github.com/useruseruse/madcampApp/assets/138096893/35a094e6-0a3d-458b-88f3-9edd40d125b1.png" width="200" height="400"/>
-<img src="https://github.com/useruseruse/madcampApp/assets/138096893/919d8959-193c-4c1b-ad57-a8cca34afe9e.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/430a5b0c-6be5-4a0e-968f-38dee077b267.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/70453419-49ed-4575-958b-1b38dedd228c.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/1e4d2cda-4a78-4001-972b-98cd30313e31.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/f2ddd080-ce21-4507-a946-25fc9da57a02.png" width="200" height="400"/>
+
 
 
 # 탭 2 : 쇼-오츠
 
 쇼츠를 볼 수 있는 탭입니다. 유튜브와 비슷한 형식의 UI로 구성했고, 좋아요&댓글 기능이 존재합니다.
 
-댓글 창에서는 연관 태그를 확인할 수 있으며, 태그를 클릭하면 나무위키로 이동해 설명을 읽을 수 있습니다.
+댓글 창에서는 연관 태그를 작성 및 확인할 수 있으며, 태그를 클릭하면 나무위키로 이동해 설명을 읽을 수 있습니다.
 
-
-
-<img src="https://github.com/useruseruse/madcampApp/assets/138096893/61b65d61-6105-436a-91c2-43ee11f00df0.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/8f2fe1b4-a492-4b5f-9ada-526418b333d7.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/e5f63fb8-b0e6-4ef6-ae9b-0d41719be2a3.png" width="200" height="400"/>
+![Screenshot_20230719-152131](https://github.com/htk2021/shooorts/assets/138096893/985da392-4734-4fd7-8543-248813953de6)
+![Screenshot_20230719-152135](https://github.com/htk2021/shooorts/assets/138096893/e560ee8c-13f4-40a3-92af-0f976cd20b0c)
 
 
 # 탭 3 : 나의 프로필
