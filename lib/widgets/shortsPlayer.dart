@@ -43,7 +43,7 @@ class PlayerState extends State<ShortsScreen> {
     return WillPopScope(
       onWillPop: () async {
         widget.onClose(); // ShortsScreen을 닫을 때 onClose 콜백 실행
-        return true;
+        return false;
       },
       child: Container(
         child: YoutubePlayer(

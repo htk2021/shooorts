@@ -273,6 +273,66 @@ class ApiClient {
     }
   }
 
+  Future<List<String>> getMoreList(String shortsId) async {
+    const url_withfunc = url + 'shorts/getReview';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'shortsId': shortsId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      final responseBody = response.body;
+      final jsonData = jsonDecode(responseBody) as Map<String, dynamic>;
+      final shortsList = List<String>.from(jsonData['shortsList'] as List<dynamic>);
+      return shortsList;
+    } else {
+      print('Failed to fetch Shorts List: ${response.statusCode}');
+      return [];
+    }
+  }
+
+  Future<void> addShorts() async {
+    const url_withfunc = url + 'shorts/addShorts';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('유튜브로부터 영상 추가 완료');
+    } else {
+      print('유튜브로부터 영상 추가 실패 : ${response.statusCode}');
+    }
+  }
+
+
+  Future<String?> getShortsUrl(String shortsId) async {
+    const url_withfunc = url + 'shorts/getshortsurl';
+    final response = await http.post(
+      Uri.parse(url_withfunc),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode({
+        'shortsId': shortsId,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print('url 얻기 완료');
+      return jsonDecode(response.body)['shortsUrl'];
+    } else {
+      print('url 얻기 실패');
+      return null;
+    }
+  }
+
   // Comment 관련 API
 
   Future<List<Comment>> getCommentsList(String shortsId) async {
@@ -306,7 +366,7 @@ class ApiClient {
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'userID': userID,
+        'userId': userID,
         'shortsId': shortsId,
         'comment': comment,
       }),
