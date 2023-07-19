@@ -28,6 +28,9 @@ class _ShortsListState extends State<ShortsList> {
   late Future<List<Comment>> _commentsFuture;
   final _commentController = TextEditingController();
 
+  PageController? _pageController;
+  int _initialPage = 0;
+
   List<Shorts> dataList = [];
   // List<Comment> commentList = [];
   List<String> likedList = [];
@@ -46,11 +49,31 @@ class _ShortsListState extends State<ShortsList> {
   @override
   void initState() {
     super.initState();
+    _loadPage();
     loadData();
   }
   void loadData() async {
     // await getShorts();
     await loadUserId();
+  }
+
+  void _loadPage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _initialPage = (prefs.getInt('page_index') ?? 0);
+      _pageController = PageController(initialPage: _initialPage);
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onPageChanged(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('page_index', index);
   }
 
 
@@ -71,7 +94,7 @@ class _ShortsListState extends State<ShortsList> {
   }
 
   void getReviewList() async {
-    reviewList = await apiClient.getReview(userId);
+    reviewList = await apiClient.UsergetReview(userId);
   }
 
   bool getLiked(String shortsId) {
@@ -98,6 +121,14 @@ class _ShortsListState extends State<ShortsList> {
     likedList.add(shortsId);
   }
 
+  void reviewed(String shortsId) async {
+    await apiClient.UseraddReview(userId, shortsId);
+  }
+
+  void unreviewed(String shortsId) async {
+    await apiClient.UserdeleteReview(userId, shortsId);
+  }
+
   void unliked(String shortsId, int index) async {
     await apiClient.shortsLikeDown(userId, shortsId);
     dataList[index].likes--;
@@ -106,6 +137,14 @@ class _ShortsListState extends State<ShortsList> {
         likedList.removeAt(i);
         break;
       }
+    }
+  }
+
+  String isHaveProfilePic(String profileUri) {
+    if(profileUri == '') {
+      return 'assets/images/temp_profile.png';
+    } else {
+      return profileUri;
     }
   }
 
@@ -143,17 +182,20 @@ class _ShortsListState extends State<ShortsList> {
                 ? Scaffold(
               body: PageView.builder(
                 itemCount: dataList.length,
-                controller: PageController(
-                  initialPage: 1,
-                  viewportFraction: 1,
-                ),
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   return Stack(
                     fit: StackFit.expand,
                     children: [
                       // 쇼츠 화면
-                      ShortsScreen(videoId: dataList[index].url,),
+                      ShortsScreen(
+                        videoId: dataList[index].url,
+                        onClose: () {
+                          // ShortsScreen이 닫힐 때 수행할 동작을 여기에 추가하세요
+                        },
+                      ),
                       // 버튼 & 이외 내용들
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -177,7 +219,14 @@ class _ShortsListState extends State<ShortsList> {
                                         children: [
                                           // 업로더 프로필
                                           CircleAvatar(
-                                            backgroundImage: AssetImage('assets/images/temp_profile.png'),
+                                            // backgroundImage: AssetImage('assets/images/temp_profile.png'),
+                                            child: FadeInImage.assetNetwork(
+                                              placeholder: 'assets/placeholder_image.png',
+                                              image: isHaveProfilePic(dataList![index].profilePic),
+                                              fit: BoxFit.cover,
+                                              width: 200,
+                                              height: 200,
+                                            ),
                                             radius: 20,
                                           ),
                                           Padding(
@@ -293,9 +342,11 @@ class _ShortsListState extends State<ShortsList> {
                                                 if (pushedReview) {
                                                   // 복습에 저장하기
                                                   reviewBtnColor = Colors.white;
+                                                  reviewed(dataList[index].shortId);
                                                 } else {
                                                   // 복습에서 빼기
                                                   reviewBtnColor = Colors.blue;
+                                                  unreviewed(dataList[index].shortId);
                                                 }
                                               });
                                             },
