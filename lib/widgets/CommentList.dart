@@ -23,7 +23,7 @@ class _CommentListState extends State<CommentList> {
   final _commentController = TextEditingController();
   ApiClient apiClient = ApiClient();
   String currentComment = "";
-  final hashtagRegExp = RegExp(r"\B#\w\w+");
+  final hashtagRegExp = RegExp(r"\B#([\w\uAC00-\uD7A3]+)");
 
   Future<List<Comment>> _getComments(String shortsId) async {
     print("load comment ${shortsId}");
@@ -53,7 +53,9 @@ class _CommentListState extends State<CommentList> {
 
   void handleHashtags(List<String> hashtags) async {
     for(int i=0 ; i<hashtags.length ; i++) {
+      print("before : $hashtags[i]");
       hashtags[i] = hashtags[i].substring(1);
+      print("before : $hashtags[i]");
     }
     Shorts temp;
     temp = await apiClient.updateHashtags(widget.shortsId, hashtags);
@@ -193,6 +195,7 @@ class _CommentListState extends State<CommentList> {
                                   addComment(widget.shortsId, currentComment);
                                   var matches = hashtagRegExp.allMatches(currentComment);
                                   if(matches.isNotEmpty) {
+                                    print("inputed");
                                     var hashtags = matches.map((match) => currentComment.substring(match.start, match.end)).toList();
                                     handleHashtags(hashtags);
                                   }
