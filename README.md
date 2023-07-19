@@ -37,8 +37,8 @@ madcamp 3주차 플러터 앱 프로젝트
 
 <img src="https://github.com/htk2021/shooorts/assets/138096893/8f2fe1b4-a492-4b5f-9ada-526418b333d7.png" width="200" height="400"/>
 <img src="https://github.com/htk2021/shooorts/assets/138096893/e5f63fb8-b0e6-4ef6-ae9b-0d41719be2a3.png" width="200" height="400"/>
-![Screenshot_20230719-152131](https://github.com/htk2021/shooorts/assets/138096893/985da392-4734-4fd7-8543-248813953de6)
-![Screenshot_20230719-152135](https://github.com/htk2021/shooorts/assets/138096893/e560ee8c-13f4-40a3-92af-0f976cd20b0c)
+<img src="https://github.com/htk2021/shooorts/assets/138096893/985da392-4734-4fd7-8543-248813953de6.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/e560ee8c-13f4-40a3-92af-0f976cd20b0c.png" width="200" height="400"/>
 
 
 # 탭 3 : 나의 프로필
@@ -47,8 +47,7 @@ madcamp 3주차 플러터 앱 프로젝트
 
 프로필 아래에는 '복습할 밈'이라는 이름으로 밈 훈련소에서 틀렸던 밈들의 썸네일들이 저장되어있습니다. 이 썸네일들을 누르면 해당 밈에 속하는 영상으로 이동합니다.
 
-<img src="https://github.com/useruseruse/madcampApp/assets/138096893/9060bb61-9124-42a9-8603-7790aa5c029b.png" width="200" height="400"/>
-<img src="https://github.com/useruseruse/madcampApp/assets/138096893/f208af37-50ba-43eb-8cd4-efe9484b31d4.png" width="200" height="400"/>
+<img src="https://github.com/htk2021/shooorts/assets/138096893/713f4fb5-21c0-4519-99a9-32a9756bf9b4.png" width="200" height="400"/>
 
 
 
