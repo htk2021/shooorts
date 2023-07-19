@@ -26,11 +26,14 @@ class _MyPageState extends State<MyPage> with SingleTickerProviderStateMixin {
     loadUserId();
   }
 
-  void goToShorts(String shortsId) {
-    setState(() {
-      showShorts = true;
-      selectedShortsId = shortsId;
-    });
+  void goToShorts(String shortsId) async {
+    final shortsUrl = await apiClient.getShortsUrl(shortsId);
+    if (shortsUrl != null) {
+      setState(() {
+        showShorts = true;
+        selectedShortsId = shortsUrl;
+      });
+    }
   }
 
   void loadUserId() async {
@@ -176,9 +179,9 @@ class _MyPageState extends State<MyPage> with SingleTickerProviderStateMixin {
   }
 
   Future<User> _loadUser() async {
-    final imageUrl = await apiClient.UsergetImage("2910713202");
-    final name = await apiClient.UsergetName("2910713202");
-    final reviewshorts = await apiClient.UsergetReview("2910713202");
+    final imageUrl = await apiClient.UsergetImage(userId); //나중에 userId로 다 바꿔야함
+    final name = await apiClient.UsergetName(userId);
+    final reviewshorts = await apiClient.UsergetReview(userId);
     return User(
       userId: userId,
       name: name ?? '넙죽이',
@@ -189,6 +192,6 @@ class _MyPageState extends State<MyPage> with SingleTickerProviderStateMixin {
   }
 
   Future<List<String>> _loadThumbnails() async {
-    return await apiClient.Usergetthumbnails("2910713202");
+    return await apiClient.Usergetthumbnails(userId);
   }
 }
