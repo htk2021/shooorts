@@ -71,7 +71,7 @@ class _ShortsListState extends State<ShortsList> {
   }
 
   void getReviewList() async {
-    reviewList = await apiClient.getReview(userId);
+    reviewList = await apiClient.UsergetReview(userId);
   }
 
   bool getLiked(String shortsId) {
@@ -119,6 +119,32 @@ class _ShortsListState extends State<ShortsList> {
   }
 
 
+  bool isLastIndex(int index) {
+    return index == dataList.length - 1;
+  }
+
+
+  Future<void> loadMoreList(int index) async {
+    if (index == dataList.length - 1) {
+      try {
+        // 마지막 인덱스에 도달한 경우 추가 리스트를 가져옴
+        final additionalList = await apiClient.getMoreList(dataList.last.shortId);
+        if (additionalList.isEmpty) {
+          // 추가 리스트가 없는 경우 유튜브에서 새로운 shorts를 가져옴
+          await apiClient.addShorts();
+          // 다시 getMoreList를 호출하여 업데이트된 리스트를 가져옴
+          final updatedList = await apiClient.getMoreList(dataList.last.shortId);
+          dataList.addAll(updatedList as Iterable<Shorts>);
+        } else {
+          dataList.addAll(additionalList as Iterable<Shorts>);
+        }
+        // dataList을 업데이트
+        setState(() {});
+      } catch (error) {
+        print('Failed to load more shorts list: $error');
+      }
+    }
+  }
 
 
 
@@ -149,11 +175,20 @@ class _ShortsListState extends State<ShortsList> {
                 ),
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
+                  if (index == dataList.length - 1) {
+                    loadMoreList(index); // 추가 데이터 로드
+                  }
+
                   return Stack(
                     fit: StackFit.expand,
                     children: [
                       // 쇼츠 화면
-                      ShortsScreen(videoId: dataList[index].url,),
+                      ShortsScreen(
+                        videoId: dataList[index].url,
+                        onClose: () {
+                          // ShortsScreen이 닫힐 때 수행할 동작을 여기에 추가하세요
+                        },
+                      ),
                       // 버튼 & 이외 내용들
                       Padding(
                         padding: const EdgeInsets.all(8.0),
